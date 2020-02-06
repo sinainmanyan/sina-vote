@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h2>success login !</h2>
+    <script>
+        const search = window.location.search.substr(1);
+        const getKey = (search,key)=>{
+            const o = search.split('&').reduce((prev,item)=>{
+                const [key,value] = item.split('=');
+                prev[key] = value;
+                return prev;
+            },{});
+            return o[key];
+        }
+
+        const code = getKey(search,'code');
+        if(code){
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function(){
+                const data = JSON.parse(xhr.responseText);// 得到用户信息
+                if(data.status === 200){
+                    window.localStorage.setItem('userinfo',JSON.stringify(data));
+                    alert('获取用户信息成功返回首页');
+                    // window.location.href = '你得页面地址'
+                }
+            }
+            xhr.open('POST','/sendCode');
+            xhr.setRequestHeader('content-type','application/json')
+            xhr.send(JSON.stringify({
+                code
+            }));
+        }
+        
+    </script>
+</body>
+</html>
